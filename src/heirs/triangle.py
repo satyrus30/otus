@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from src.parents.polygon import *
+from collections import Counter
 
 
 class Triangle(Polygon):
@@ -19,12 +20,32 @@ class Triangle(Polygon):
     def add_area(self, figure):
         return self.calculate_area() + figure
 
-    def get_max_side(self):
-        return max(self.size_side)
+    def check_count_side(self):
+        return self.count_side
 
+    @staticmethod
+    def check_count_elem(list_val):
+        return len(list_val)
 
+    @staticmethod
+    def check_is_not_zero(list_val):
+        return len([i for i in list_val if i == 0])
+
+    @staticmethod
+    def check_is_num(list_val):
+        return len([i for i in list_val if type(i) == str])
+
+    @staticmethod
+    def check_less_than_zero(list_val):
+        return len([i for i in list_val if i < 0])
+
+    def sum_angles_triangle(self):
+        return sum(self.angles)
+
+    @staticmethod
+    def check_repeating_elem(list_val):
+        return len(Counter(list_val))
 
 
 if __name__ == "__main__":
-    tr = Triangle(3, [1,10,10])
-    print(tr.add_area(5))
+    pass
