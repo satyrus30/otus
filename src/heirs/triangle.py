@@ -29,7 +29,7 @@ class Triangle(Polygon):
 
     @staticmethod
     def check_is_not_zero(list_val):
-        return len([i for i in list_val if i == 0])
+        return [i for i in list_val if i == 0]
 
     @staticmethod
     def check_is_num(list_val):
@@ -44,7 +44,14 @@ class Triangle(Polygon):
 
     @staticmethod
     def check_repeating_elem(list_val):
-        return len(Counter(list_val))
+        """
+        В прямоугольнике 2 пары сторон с одинаковыми длинами [10, 20, 10, 20] -> (side_1: 2,side_1: 2) -> len() == 2
+        :param list_val: Список длин сторон прямоугольника
+        :return:
+        number_of_pairs: количество пар Counter({10: 2, 20: 2})
+        """
+        number_of_pairs = len(Counter(list_val))
+        return number_of_pairs
 
 
 if __name__ == "__main__":
