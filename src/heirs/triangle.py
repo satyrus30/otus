@@ -20,24 +20,25 @@ class Triangle(Polygon):
     def add_area(self, figure):
         return self.calculate_area() + figure
 
-    def check_count_side(self):
-        return self.count_side
+    def check_value(self):
+        return self.count_side, self.size_side, self.angles
 
-    @staticmethod
-    def check_count_elem(list_val):
-        return len(list_val)
+    # @staticmethod
+    # def check_count_elem(list_val):
+    #     return list_val
 
-    @staticmethod
-    def check_is_not_zero(list_val):
-        return [i for i in list_val if i == 0]
+    # @staticmethod
+    # def check_is_not_zero(list_val):
+    #     return [i for i in list_val if i == 0]
 
-    @staticmethod
-    def check_is_num(list_val):
-        return len([i for i in list_val if type(i) == str])
+    # @staticmethod
+    # def check_is_num(list_val):
+    #     num = (int, float)
+    #     return [i for i in list_val if type(i) not in num]
 
     @staticmethod
     def check_less_than_zero(list_val):
-        return len([i for i in list_val if i < 0])
+        return [i for i in list_val if i <= 0]
 
     def sum_angles_triangle(self):
         return sum(self.angles)
