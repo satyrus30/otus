@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from src.heirs.triangle import *
+import array
 import pytest
 
 MAX_COUNT_TRIANGLE = 3
+All_NEED_TYPES_OBJ = [['0', 60, 50], [None, 60, 50], [(123,), 60, 50], [{123, 'a'}, 60, 50], [True, 60, 50],
+                      [{'a': 22}, 60, 50], array.array('i', [1, 2, 3])]
+TYPE_VALUE = (int, float)
 SUM_ANGLES = 180
 
 
@@ -15,13 +19,15 @@ def test_correct_count_side():
     assert correct_count_side.count_side == MAX_COUNT_TRIANGLE, message
 
 
-@pytest.mark.negative_triangle
-@pytest.mark.parametrize('incorrect_count_side, max_count', [
-    (Triangle(2, [10, 10.5, 50], [100, 66.5, 20]), MAX_COUNT_TRIANGLE),
-    (Triangle('4', [10, 10.5, 50], [100, 66.5, 20]), MAX_COUNT_TRIANGLE)])
-def test_incorrect_count_side(incorrect_count_side, max_count):
-    message = f"""Number of sides - {incorrect_count_side.count_side}, the figure is not a triangle"""
-    assert incorrect_count_side.count_side != max_count, message
+@pytest.mark.positive_triangle
+@pytest.mark.parametrize('count_side', [3])
+@pytest.mark.parametrize('count_size_side', [[10, 55, 60]])
+@pytest.mark.parametrize('count_angle', [[120, 33, 27]])
+def test_correct_count_elem(count_side, count_size_side, count_angle):
+    count_elem = Triangle(count_side, count_size_side, count_angle)
+    message = f"The number of elements is not equal to {MAX_COUNT_TRIANGLE}"
+    count_side, size_side, angles = count_elem.check_value()
+    assert count_side == MAX_COUNT_TRIANGLE or len(size_side) == MAX_COUNT_TRIANGLE or len(angles) == MAX_COUNT_TRIANGLE, message
 
 
 @pytest.mark.positive_triangle
@@ -34,77 +40,44 @@ def test_correct_size_side():
 
 
 @pytest.mark.negative_triangle
-@pytest.mark.parametrize('count_size_site, max_count', [
-    (Triangle(3, [10, 60], [120, 30, 33]), MAX_COUNT_TRIANGLE),
-    (Triangle(3, [10, 60, 20, 40], [120, 30, 33]), MAX_COUNT_TRIANGLE)])
-def test_count_elem_size_site(count_size_site, max_count):
-    message = f"Number of side dimensions less than or greater than {max_count}"
-    assert count_size_site.check_count_elem(count_size_site.size_side) != max_count, message
+@pytest.mark.parametrize('count_side', [0, -3])
+@pytest.mark.parametrize('size_side', [[-10, 60, 50], [0, 60, 50], [10, -60, 50]])
+@pytest.mark.parametrize('angles', [[10, 60, 50], [0, 60, 50], [10, 60, -50]])
+def test_check_value_less_than_or_equal_zero(count_side, size_side, angles):
+    incorrect_value_type = Triangle(count_side, size_side, angles)
+    size_side = incorrect_value_type.check_less_than_zero(incorrect_value_type.size_side)
+    angles = incorrect_value_type.check_less_than_zero(incorrect_value_type.angles)
+    message = "In the values of the data types passed in the object the correct values are"
+    assert count_side != [] or size_side != [] or angles != [], message
 
 
 @pytest.mark.negative_triangle
-def test_size_side_is_zero():
-    size_side_is_zero = Triangle(0, [0, 60, 50], [9, 0, 30])
-    message = "No sides equal 0"
-    result = size_side_is_zero.check_is_not_zero(size_side_is_zero.size_side)
-    assert result != [], message
-
-
-@pytest.mark.negative_triangle
-def test_size_side_is_not_num():
-    size_side_not_num = Triangle(0, [20, 60, '50'], [9, 0, 30])
-    message = "All of the sides is numbers"
-    result = size_side_not_num.check_is_num(size_side_not_num.size_side)
-    assert result != [], message
-
-
-@pytest.mark.negative_triangle
-def test_size_side_less_than_zero():
-    less_than_zero = Triangle('a', [-10, 0, 50], [-20, 180, 20])
-    message = "All sides of the rectangle are greater than 0"
-    result = less_than_zero.check_less_than_zero(less_than_zero.size_side)
-    assert result != 0, message
+@pytest.mark.parametrize('count_side', All_NEED_TYPES_OBJ)
+@pytest.mark.parametrize('size_side', All_NEED_TYPES_OBJ)
+@pytest.mark.parametrize('angles', All_NEED_TYPES_OBJ)
+def test_incorrect_value_type(count_side, size_side, angles):
+    incorrect_value_type = Triangle(count_side, size_side, angles)
+    count_side, size_side, angles = incorrect_value_type.check_value()
+    message = "In the values of the data types passed in the object the correct values are"
+    assert type(count_side) not in TYPE_VALUE or type(size_side) not in TYPE_VALUE or type(angles) not in TYPE_VALUE, message
 
 
 @pytest.mark.positive_triangle
 def test_correct_angles():
-    correct_angles = Triangle(3, [10, -10, 50], [80, 40, 60])
+    correct_angles = Triangle(3, [10, 20, 50], [80, 40, 60])
     message = "The size of the angles in the triangle is not correct"
     assert correct_angles.sum_angles_triangle() == SUM_ANGLES, message
 
 
 @pytest.mark.negative_triangle
-def test_angle_is_zero():
-    angle_is_zero = Triangle('a', [10, 0, 50], [0, 150, 30])
-    message = "No angle equal 0"
-    result = angle_is_zero.check_is_not_zero(angle_is_zero.angles)
-    assert result != [], message
-
-
-@pytest.mark.negative_triangle
-def test_angle_is_not_num():
-    angle_is_not_num = Triangle('a', [10, 0, 50], [20, '125', 35])
-    message = "All of the angles is numbers"
-    result = angle_is_not_num.check_is_num(angle_is_not_num.angles)
-    assert result != [], message
-
-
-@pytest.mark.negative_triangle
-def test_angle_less_than_zero():
-    less_than_zero = Triangle('a', [10, 0, 50], [-20, 180, 20])
-    message = "All angles of the rectangle are greater than 0"
-    result = less_than_zero.check_less_than_zero(less_than_zero.angles)
-    assert result != [], message
-
-
-@pytest.mark.negative_triangle
-@pytest.mark.parametrize('count_angle, max_count', [
-    (Triangle(3, [30, 60, 40], [120, 30]), MAX_COUNT_TRIANGLE),
-    (Triangle(3, [30, 60, 40], [120, 30, 33, 44]), MAX_COUNT_TRIANGLE)])
-def test_count_elem_angle(count_angle, max_count):
-    message = f"The number of angles is equal to {max_count}"
-    result = count_angle.check_count_elem(count_angle.angles)
-    assert result != max_count, message
+@pytest.mark.parametrize('count_side', [2, 4])
+@pytest.mark.parametrize('count_size_side', [[10, 60], [10, 60, 20, 40]])
+@pytest.mark.parametrize('count_angle', [[120, 30], [120, 30, 33, 44]])
+def test_incorrect_count_elem(count_side, count_size_side, count_angle):
+    count_elem = Triangle(count_side, count_size_side, count_angle)
+    message = f"The count elems is equal to {MAX_COUNT_TRIANGLE}"
+    count_side, size_side, angles = count_elem.check_value()
+    assert count_side != MAX_COUNT_TRIANGLE or len(size_side) != MAX_COUNT_TRIANGLE or len(angles) != MAX_COUNT_TRIANGLE, message
 
 
 @pytest.mark.positive_triangle

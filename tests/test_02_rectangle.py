@@ -2,26 +2,63 @@
 # -*- coding: utf-8 -*-
 
 from src.heirs.rectangle import *
+import array
 import pytest
 
+All_NEED_TYPES_OBJ = [['0', 60, 50], [None, 60, 50], [(123,), 60, 50], [{123, 'a'}, 60, 50], [True, 60, 50],
+                      [{'a': 22}, 60, 50], array.array('i', [1, 2, 3])]
+TYPE_VALUE = (int, float)
+
 MAX_COUNT_RECTANGLE = 4
-SUM_ANGLES = 360
+ANGLE_VALUE = 90
 
 
 @pytest.mark.positive_rectangle
-def test_correct_count_side():
-    correct_count_side = Rectangle(4, [10.5, 40, 10.5, 40], [90, 90, 90, 90])
-    message = f"""Number of sides - {correct_count_side.count_side}, the figure is not a rectangle"""
-    assert correct_count_side.count_side == MAX_COUNT_RECTANGLE, message
+@pytest.mark.parametrize('count_side', [4])
+@pytest.mark.parametrize('count_size_side', [[10.5, 40, 10.5, 40]])
+@pytest.mark.parametrize('count_angle', [[90, 90, 90, 90]])
+def test_correct_count_elem(count_side, count_size_side, count_angle):
+    count_elem = Rectangle(count_side, count_size_side, count_angle)
+    message = f"The number of elements is not equal to {MAX_COUNT_RECTANGLE}"
+    count_side, size_side, angles = count_elem.check_value()
+    assert count_side == MAX_COUNT_RECTANGLE or len(size_side) == MAX_COUNT_RECTANGLE or \
+           len(angles) == MAX_COUNT_RECTANGLE, message
 
 
 @pytest.mark.negative_rectangle
-@pytest.mark.parametrize('incorrect_count_side, max_count', [
-    (Rectangle(2, [10.5, 40, 10.5, 40], [90, 90, 90, 90]), MAX_COUNT_RECTANGLE),
-    (Rectangle('4', [10.5, 40, 10.5, 40], [90, 90, 90, 90]), MAX_COUNT_RECTANGLE)])
-def test_incorrect_count_side(incorrect_count_side, max_count):
-    message = f"""Number of sides - {incorrect_count_side.count_side}, the figure is not a rectangle"""
-    assert incorrect_count_side.count_side != max_count, message
+@pytest.mark.parametrize('count_side', [3, 5])
+@pytest.mark.parametrize('count_size_side', [[10, 60, 10], [10, 60, 10, 60, 50]])
+@pytest.mark.parametrize('count_angle', [[120, 30, 120], [120, 30, 120, 30, 40]])
+def test_incorrect_count_elem(count_side, count_size_side, count_angle):
+    count_elem = Rectangle(count_side, count_size_side, count_angle)
+    message = f"The count elems is equal to {MAX_COUNT_RECTANGLE}"
+    count_side, size_side, angles = count_elem.check_value()
+    assert count_side != MAX_COUNT_RECTANGLE or len(size_side) != MAX_COUNT_RECTANGLE or \
+           len(angles) != MAX_COUNT_RECTANGLE, message
+
+
+@pytest.mark.negative_rectangle
+@pytest.mark.parametrize('count_side', All_NEED_TYPES_OBJ)
+@pytest.mark.parametrize('size_side', All_NEED_TYPES_OBJ)
+@pytest.mark.parametrize('angles', All_NEED_TYPES_OBJ)
+def test_incorrect_value_type(count_side, size_side, angles):
+    incorrect_value_type = Rectangle(count_side, size_side, angles)
+    count_side, size_side, angles = incorrect_value_type.check_value()
+    message = "In the values of the data types passed in the object the correct values are"
+    assert type(count_side) not in TYPE_VALUE or type(size_side) not in TYPE_VALUE or \
+           type(angles) not in TYPE_VALUE, message
+
+
+@pytest.mark.negative_triangle
+@pytest.mark.parametrize('count_side', [0, -3])
+@pytest.mark.parametrize('size_side', [[60, -50, 60, 50], [60 , 0, 60, 50], [60, 10, -60, 10]])
+@pytest.mark.parametrize('angles', [[60, 10, 60, 10], [60, 0, 60, 50], [60, 10, 60, -10]])
+def test_check_value_less_than_or_equal_zero(count_side, size_side, angles):
+    incorrect_value_type = Rectangle(count_side, size_side, angles)
+    size_side = incorrect_value_type.check_less_than_zero(incorrect_value_type.size_side)
+    angles = incorrect_value_type.check_less_than_zero(incorrect_value_type.angles)
+    message = "In the values of the data types passed in the object the correct values are"
+    assert count_side != [] or size_side != [] or angles != [], message
 
 
 @pytest.mark.positive_rectangle
@@ -46,75 +83,12 @@ def test_incorrect_size_site(incorrect_size_site):
     assert result_sum == 4, message_1
 
 
-@pytest.mark.negative_rectangle
-def test_size_side_is_zero():
-    """
-    Метод check_is_not_zero() возвращает не пустой [] если сторона == 0
-    """
-    size_side_is_zero = Rectangle(4, [10, 60, 10, 0], [90, 90, 90, 90])
-    message = "No sides equal 0"
-    result = size_side_is_zero.check_is_not_zero(size_side_is_zero.size_side)
-    assert result != [], message
-
-
-@pytest.mark.negative_rectangle
-@pytest.mark.parametrize('size_side_not_num', [
-    Rectangle(4, [10, 60, 10, '60'], [90, 90, 90, 90]),
-    Rectangle(4, [None, 60, 10, 60], [90, 90, 90, 90])])
-def test_size_side_is_not_num(size_side_not_num):
-    message = "All of the sides is numbers"
-    result = size_side_not_num.check_is_num(size_side_not_num.size_side)
-    assert result != [], message
-
-
-@pytest.mark.negative_rectangle
-def test_size_side_less_than_zero():
-    less_than_zero = Rectangle(4, [-10, 60, 10, 60], [90, 90, 90, 90])
-    message_side = "All sides of the rectangle are greater than 0"
-    result_side = less_than_zero.check_less_than_zero(less_than_zero.size_side)
-    assert result_side != [], message_side
-
-
 @pytest.mark.positive_rectangle
 def test_correct_angles():
     correct_angles = Rectangle(4, [10, 60, 10, 60], [90, 90, 90, 90])
     message = "The size of the angles in the rectangle is not correct"
     result = correct_angles.sum_angles_triangle()
-    assert result == SUM_ANGLES, message
-
-
-@pytest.mark.negative_rectangle
-def test_angle_is_zero():
-    angle_is_zero = Rectangle(4, [10, 60, 10, 60], [90, 0, 90, 90])
-    message = "No angle equal 0"
-    result = angle_is_zero.check_is_not_zero(angle_is_zero.angles)
-    assert result != [], message
-
-
-@pytest.mark.negative_rectangle
-def test_angle_is_not_num():
-    angle_is_not_num = Rectangle(4, [10, 60, 10, 60], [90, '90', 90, 90])
-    message = "All of the angles is numbers"
-    result = angle_is_not_num.check_is_num(angle_is_not_num.angles)
-    assert result != [], message
-
-
-@pytest.mark.negative_rectangle
-def test_angles_less_than_zero():
-    less_than_zero = Rectangle(4, [10, 60, 10, 60], [90, -90, 90, 90])
-    message_angles = "All angles of the rectangle are greater than 0"
-    result_angles = less_than_zero.check_less_than_zero(less_than_zero.angles)
-    assert result_angles != [], message_angles
-
-
-@pytest.mark.negative_rectangle
-@pytest.mark.parametrize('count_angle, max_count', [
-    (Rectangle(4, [10, 60, 10, 60], [90, 90, 90]), MAX_COUNT_RECTANGLE),
-    (Rectangle(4, [10, 60, 10, 60], [90, 90, 90, 90, 90]), MAX_COUNT_RECTANGLE)])
-def test_count_elem_angle(count_angle, max_count):
-    message = f"The number of angles is equal to {max_count}"
-    result = count_angle.check_count_elem(count_angle.angles)
-    assert result != max_count, message
+    assert result / 4 == ANGLE_VALUE, message
 
 
 @pytest.mark.positive_square
