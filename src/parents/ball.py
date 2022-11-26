@@ -1,19 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from abc import ABCMeta, abstractmethod
 
-class Ball:
+
+class Ball(metaclass=ABCMeta):
     NAME = 'ball'
 
-    def __init__(self, size_radius):
+    def __init__(self, size_radius, diameter):
         self.size_radius = size_radius
+        self.diameter = diameter
         self.p = 3.14
 
+    @abstractmethod
     def calculate_area(self):
-        return round(4 * self.p * self.size_radius ** 2)
+        pass
 
+    @abstractmethod
     def calculate_perimeter(self):
-        return round(2 * self.p * self.size_radius)
+        pass
 
+    @abstractmethod
     def add_area(self, figure):
-        return self.calculate_perimeter() + figure
+        pass
+
+    @abstractmethod
+    def check_diameter(self):
+        pass
