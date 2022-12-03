@@ -8,33 +8,22 @@ from collections import Counter
 class Triangle(Polygon):
     NAME = 'triangle'
 
-    def calculate_area(self):
+    @property
+    def area(self):
         a, b, c = self.size_side
-        half_perimetr = self.calculate_perimeter()/2
+        half_perimetr = self.perimeter/2
         area = (half_perimetr * abs(half_perimetr - a) * abs(half_perimetr - b) * abs(half_perimetr - c)) ** 0.5
         return round(area)
 
-    def calculate_perimeter(self):
+    @property
+    def perimeter(self):
         return sum(self.size_side)
 
     def add_area(self, figure):
-        return self.calculate_area() + figure
+        return self.area + figure.area
 
     def check_value(self):
         return self.count_side, self.size_side, self.angles
-
-    # @staticmethod
-    # def check_count_elem(list_val):
-    #     return list_val
-
-    # @staticmethod
-    # def check_is_not_zero(list_val):
-    #     return [i for i in list_val if i == 0]
-
-    # @staticmethod
-    # def check_is_num(list_val):
-    #     num = (int, float)
-    #     return [i for i in list_val if type(i) not in num]
 
     @staticmethod
     def check_less_than_zero(list_val):

@@ -12,17 +12,20 @@ class Polygon(metaclass=ABCMeta):
         self.size_side = size_side
         self.angles = angles
 
+    @property
     @abstractmethod
-    def calculate_area(self):
+    def area(self):
         pass
 
     @abstractmethod
-    def calculate_perimeter(self):
+    def perimeter(self):
         pass
 
     @abstractmethod
     def add_area(self, figure):
-        pass
+        if figure.area < 0 or not issubclass(figure, Polygon):
+            raise ValueError('the values transmitted do not correspond to')
+        return self.area + figure.area
 
     @abstractmethod
     def sum_angles_triangle(self):
