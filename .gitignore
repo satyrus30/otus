@@ -7,3 +7,4 @@ venv/
 
 # some files
 example*.*
+*.json
