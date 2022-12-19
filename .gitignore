@@ -8,3 +8,6 @@ venv/
 # some files
 example*.*
 *.json
+
+# some directory
+src/
